@@ -1,21 +1,21 @@
 [submodule "open/contract-api"]
 	path = open/contract-api
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-contract-api.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-contract-api.git
 [submodule "open/contract-config"]
 	path = open/contract-config
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-contract-config.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-contract-config.git
 [submodule "open/contract-types"]
 	path = open/contract-types
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-contract-types.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-contract-types.git
 [submodule "open/ui"]
 	path = open/ui
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-ui.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-ui.git
 [submodule "open/core-web"]
 	path = open/core-web
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-core-web.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-core-web.git
 [submodule "open/ui-native"]
 	path = open/ui-native
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-ui-native.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-ui-native.git
 [submodule "open/i18n"]
 	path = open/i18n
-	url = git@github.com:HUNTERCAT-DIGITAL/lieshou-i18n.git
+	url = http://gitlab.192.168.3.86.nip.io/huntercat-digital/lieshou-i18n.git
