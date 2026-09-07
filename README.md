@@ -12,12 +12,12 @@
 ## 技术栈
 
 - Taro 4(React 18 + TypeScript)+ pnpm workspace
-- 共享层 `@lieshoucloud/{contract-api,contract-types,contract-config,core-web}` 经 `open/` submodule 挂载 [lieshou-cloud-web](https://github.com/HUNTERCAT-DIGITAL/lieshou-cloud-web)
+- 共享层 `@lieshoucloud/{contract-api,contract-types,contract-config,core-web}` 经 `open/` submodule 挂载 [lieshou-cloud-web](https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-cloud-web)
 
 ## 快速开始
 
 ```bash
-git clone git@github.com:HUNTERCAT-DIGITAL/lieshou-mini-program.git
+git clone ssh://git@gitlab.ts.huntercat.cn:2222/huntercat-digital/lieshou-app-mini-program.git
 git submodule update --init --recursive   # 拉 open/(lieshou-cloud-web 共享包)
 pnpm install
 pnpm dev:weapp                            # 输出 dist/,微信开发者工具打开
@@ -55,10 +55,10 @@ pnpm dev:h5                               # H5 预览
 
 ## 关联仓库
 
-- 共享层(开源):`HUNTERCAT-DIGITAL/lieshou-cloud-web`
-- 后端底座(开源):`HUNTERCAT-DIGITAL/lieshou-cloud`
+- 共享层(开源):`https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-cloud-web`
+- 后端底座(开源):`https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-cloud`
 - 其他端(开源):`lieshou-cloud-admin-web` · `lieshou-cloud-desktop` · `lieshou-cloud-mobile`
-- 商业主仓:`HUNTERCAT-DIGITAL/lieshou-cloud-pro`
+- 商业主仓:`https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-cloud-pro`
 
 ## License
 

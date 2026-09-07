@@ -6,7 +6,7 @@
 ## 项目身份
 - 名称: lieshou-mini-program（猎手云微信小程序 · 开源）
 - 类型: 前端应用（微信小程序端，薄壳端）
-- 仓库: HUNTERCAT-DIGITAL/lieshou-mini-program（main）
+- 仓库: https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-mini-program（main）
 - 技术栈: Taro 4 + React 18 + TypeScript strict + pnpm workspace
 
 ## 架构速览
