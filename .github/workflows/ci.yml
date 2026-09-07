@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          # 不用 cache: pnpm —— self-hosted runner 缓存上传 Azure Blob 本地网络不通会挂死（对齐 admin-web ae0feb0）
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Typecheck + Build + Lint + Test
