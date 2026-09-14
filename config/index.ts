@@ -27,14 +27,30 @@ if (existsSync(clientRoot)) {
   }
 }
 
+// 共享包（@lieshoucloud/*）已装进 node_modules，这里再显式 alias 一次，目的有二：
+//  1. 客户包（../packages/<client>，经 clientAlias 注入）源码里 import 的 @lieshoucloud/*
+//     也落到端自己的同一份实例 —— 否则会沿交付仓的 node_modules 再解析出一份：既不在
+//     compile.include 里（TS 无 loader → Module parse failed），又会把 zustand store 变成两份。
+//  2. 版本由端说话：客户包不再带进另一份共享包版本。
+// node_modules 未安装时（裸克隆先跑 config）取不到目录 → 空表，退化为 node 解析。
+const sharedRoot = resolve(projectRoot, "node_modules/@lieshoucloud");
+const sharedAlias: Record<string, string> = {};
+if (existsSync(sharedRoot)) {
+  for (const name of readdirSync(sharedRoot)) {
+    const src = resolve(sharedRoot, name, "src");
+    if (existsSync(src)) sharedAlias[`@lieshoucloud/${name}`] = src;
+  }
+}
+
 const alias = {
   "@": resolve(projectRoot, "src"),
+  ...sharedAlias,
   ...clientAlias,
 };
 
-// 共享包（@lieshoucloud/*）改为从内网 Nexus 消费（2026-09）：源码随 tarball 发布（main/types → src/*.ts），
-// 仍须让 babel 处理 node_modules 里的 TS/JSX —— 故显式加进 compile.include。
-// .npmrc 设 node-linker=hoisted，node_modules/@lieshoucloud/* 为真实目录（非 pnpm 软链），路径稳定。
+// 共享包（@lieshoucloud/*）从内网 Nexus 装进 node_modules（源码随 tarball 发，main/types → src/*.ts），
+// 仍须让 babel 处理它们（webpack 默认只编译 sourceRoot）→ 显式加进 compile.include。
+// .npmrc 设 node-linker=hoisted，node_modules/@lieshoucloud/* 是真实目录（非 pnpm 软链），路径稳定。
 const sharedInclude = resolve(projectRoot, "node_modules/@lieshoucloud");
 
 export default defineConfig({
