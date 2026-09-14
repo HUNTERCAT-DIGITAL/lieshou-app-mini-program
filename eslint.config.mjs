@@ -10,7 +10,6 @@ export default tseslint.config(
     ignores: [
       'dist/**',
       'node_modules/**',
-      'open/**',
       '.swc/**',
       'src/pages/boot/**',
       'babel.config.js',

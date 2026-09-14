@@ -11,16 +11,16 @@
 
 ## 技术栈
 
-- Taro 4(React 18 + TypeScript)+ pnpm workspace
-- 共享层 `@lieshoucloud/{contract-api,contract-types,contract-config,core-web}` 经 `open/` submodule 挂载 [lieshou-cloud-web](https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-cloud-web)
+- Taro 4（React 18 + TypeScript）+ pnpm
+- 共享层 `@lieshoucloud/{contract-api,contract-types,contract-config,core-web,i18n}` 经**内网 Nexus** `npm-group` 消费（作用域包，无需 submodule，不再是 workspace:*）
 
 ## 快速开始
 
 ```bash
+# 需要能访问 https://nexus.ts.huntercat.cn/repository/npm-group/（内网 Caddy 自签 CA）
 git clone ssh://git@gitlab.ts.huntercat.cn:2222/huntercat-digital/lieshou-app-mini-program.git
-git submodule update --init --recursive   # 拉 open/(lieshou-cloud-web 共享包)
 pnpm install
-pnpm dev:weapp                            # 输出 dist/,微信开发者工具打开
+pnpm dev:weapp                            # 输出 dist/，微信开发者工具打开
 pnpm dev:h5                               # H5 预览
 ```
 
@@ -45,13 +45,13 @@ pnpm dev:h5                               # H5 预览
 
 ## 共享层升级流程
 
-共享层（`open/` 下 submodule：contract-api / contract-types / contract-config / ui / core-web）由独立仓维护：
+共享层（`@lieshoucloud/*`）由独立仓维护，**经内网 Nexus 发版消费**（2026-09 起替代 `open/` submodule）：
 
-1. 改共享仓（如 `lieshou-core-web`）→ 提交 + push
-2. 本端升级：`git -C open/core-web fetch origin main && git -C open/core-web checkout <commit>`
-3. 本端提交 gitlink bump（`open/*` 指针变更）
+1. 改共享仓（如 `lieshou-core-web`）→ 合并 → 打 `vX.Y.Z` tag → CI 发布到 Nexus `npm-hosted`
+2. 本端升级：`pnpm up @lieshoucloud/core-web@^0.2.0`（或手改 `package.json` 后 `pnpm install`）
+3. 本端提交 `package.json` + `pnpm-lock.yaml`
 
-> 纪律：共享仓提交后**立即** bump 各端 pin，避免 submodule 漂移。
+> 版本矩阵见 ai-kit `SUPPLY_CHAIN.md`；tag 只允许在验证后打，发布点只增不改。
 
 ## 关联仓库
 

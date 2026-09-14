@@ -17,6 +17,9 @@ coverage/
 *.log
 .env*.local
 .env
+
+# codegraph 本地索引
+.codegraph/
 # LieShouBoot prepare.mjs 生成的薄壳页（勿提交）
 src/pages/boot/
 .swc/

@@ -21,24 +21,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@lieshoucloud/contract-api": [
-        "open/contract-api/src"
-      ],
-      "@lieshoucloud/contract-config": [
-        "open/contract-config/src"
-      ],
-      "@lieshoucloud/contract-types": [
-        "open/contract-types/src"
-      ],
-      "@lieshoucloud/contract-types/*": [
-        "open/contract-types/src/*"
-      ],
-      "@lieshoucloud/core-web": [
-        "open/core-web/src"
-      ],
-      "@lieshoucloud/i18n": [
-        "open/i18n/src"
       ]
     },
     "lib": [
