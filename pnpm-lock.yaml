@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@lieshoucloud/contract-api':
-        specifier: ^0.2.0
+        specifier: 0.2.1
         version: 0.2.1
       '@lieshoucloud/contract-types':
-        specifier: ^0.2.0
+        specifier: 0.2.1
         version: 0.2.1
       '@lieshoucloud/core-web':
-        specifier: ^0.1.0
-        version: 0.1.0(@types/react@18.3.31)(react@18.3.1)
+        specifier: 0.1.1
+        version: 0.1.1(@types/react@18.3.31)(react@18.3.1)
       '@lieshoucloud/i18n':
-        specifier: ^0.2.0
+        specifier: 0.2.0
         version: 0.2.0
       '@tarojs/components':
         specifier: 4.0.13
@@ -1707,8 +1707,8 @@ packages:
   '@lieshoucloud/contract-types@0.2.1':
     resolution: {integrity: sha512-qNIZewz+lMIbeRIGJPQJK02yz1kNWutTkia2qvsqx98r3SVhGa3rENFKYK4f4r2nnn2jXQVzUO3Ywlzo+nA0Sg==}
 
-  '@lieshoucloud/core-web@0.1.0':
-    resolution: {integrity: sha512-uIF+0J4D7+gRkCIvFhjBnrW5VUu1Z1zdwFvV9kZtIZ1rLyCpv0tKH+c4hAGC5dgcq4GCu2FJSRH+YKi/JozeKA==}
+  '@lieshoucloud/core-web@0.1.1':
+    resolution: {integrity: sha512-ZzHA6ITpfPhfLpi5V8tp+g1T/9dBz1kWZU2Uft+lfPWtwc6QiayKB8OsoT/4tHr54xZemfq0wQea68A70gJ5fw==}
     peerDependencies:
       react: '>=18'
 
@@ -9225,9 +9225,8 @@ snapshots:
     dependencies:
       dayjs: 1.11.23
 
-  '@lieshoucloud/core-web@0.1.0(@types/react@18.3.31)(react@18.3.1)':
+  '@lieshoucloud/core-web@0.1.1(@types/react@18.3.31)(react@18.3.1)':
     dependencies:
-      '@lieshoucloud/contract-api': 0.2.1
       '@lieshoucloud/contract-types': 0.2.1
       '@lieshoucloud/i18n': 0.2.0
       react: 18.3.1
