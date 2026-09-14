@@ -49,7 +49,8 @@ pnpm dev:h5                               # H5 预览
 | `@lieshoucloud/i18n` | L0 契约（文案） | `0.2.0` | lieshou-i18n |
 | `@lieshoucloud/core-web` | L1 业务逻辑 | `0.1.1` | lieshou-core-web |
 
-- 制品在 `npm-hosted`，消费方经 `npm-group` 匿名解析（`.npmrc` 只给 `@lieshoucloud` scope 指向内网，公共包仍走默认源）
+- 制品在 `npm-hosted`；`.npmrc` 的 `registry` 指向 `npm-group`——**本仓上游全部经内网 Nexus**：`@lieshoucloud/*` 由 `npm-hosted` 分发，公共包（Taro / React / webpack …）由 `npm-group` 代理 `npm-proxy`（→ npmmirror）拉取
+- 换源不需重生成 lockfile：`pnpm-lock.yaml` 不含 tarball URL（实测：干净 store 全新安装 2.1G 全部来自 `nexus.ts.huntercat.cn`）
 - 共享包**无构建步**：tarball 里是 TS 源码（`main`/`types` → `src/index.ts`），由端侧打包器消化——
   所以 `config/index.ts` 把它们加进了 `compile.include`（webpack 默认只编译 `sourceRoot`）
 
