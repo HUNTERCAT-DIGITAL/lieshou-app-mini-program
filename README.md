@@ -12,13 +12,19 @@
 ## 技术栈
 
 - Taro 4（React 18 + TypeScript）+ pnpm
-- 共享层 `@lieshoucloud/{contract-api,contract-types,contract-config,core-web,i18n}` 经**内网 Nexus** `npm-group` 消费（作用域包，无需 submodule，不再是 workspace:*）
+- 共享层 `@lieshoucloud/{contract-api,contract-types,core-web,i18n}` 经**内网 Nexus**（`npm-group`）版本依赖引入，**精确锁版本**（无 caret：`0.x` 的 `^0.2.1` 会把消费方锁在 `<0.3.0`，且历史上有 `^0.0.1` 死链事故）；不再用 `open/*` submodule
 
 ## 快速开始
 
 ```bash
-# 需要能访问 https://nexus.ts.huntercat.cn/repository/npm-group/（内网 Caddy 自签 CA）
+# 需在 tailnet 内（能访 nexus.ts.huntercat.cn）
 git clone ssh://git@gitlab.ts.huntercat.cn:2222/huntercat-digital/lieshou-app-mini-program.git
+cd lieshou-app-mini-program
+
+# 内网 Nexus 用 Caddy 自签 CA，而 node 不读系统信任库 —— 不设这个变量 pnpm install 会报
+# UNABLE_TO_GET_ISSUER_CERT_LOCALLY（CI 里指向 runner 挂载的 caddy-root.crt）
+export NODE_EXTRA_CA_CERTS=~/.nexus-ca/caddy-root.crt   # 用 caddy-root.crt 的副本也行
+
 pnpm install
 pnpm dev:weapp                            # 输出 dist/，微信开发者工具打开
 pnpm dev:h5                               # H5 预览
@@ -34,6 +40,19 @@ pnpm dev:h5                               # H5 预览
 | `pnpm typecheck` | tsc --noEmit |
 | `pnpm test` | Vitest |
 
+## 上游依赖（Nexus）
+
+| 包 | 层 | 本端锁定版本 | 上游仓 |
+| --- | --- | --- | --- |
+| `@lieshoucloud/contract-api` | L0 契约（传输层） | `0.2.1` | lieshou-contract-api |
+| `@lieshoucloud/contract-types` | L0 契约（类型） | `0.2.1` | lieshou-contract-types |
+| `@lieshoucloud/i18n` | L0 契约（文案） | `0.2.0` | lieshou-i18n |
+| `@lieshoucloud/core-web` | L1 业务逻辑 | `0.1.1` | lieshou-core-web |
+
+- 制品在 `npm-hosted`，消费方经 `npm-group` 匿名解析（`.npmrc` 只给 `@lieshoucloud` scope 指向内网，公共包仍走默认源）
+- 共享包**无构建步**：tarball 里是 TS 源码（`main`/`types` → `src/index.ts`），由端侧打包器消化——
+  所以 `config/index.ts` 把它们加进了 `compile.include`（webpack 默认只编译 `sourceRoot`）
+
 ## 客户/行业装配
 
 本仓只含**通用部分**;行业能力与客户定制由客户仓注入:
@@ -47,11 +66,12 @@ pnpm dev:h5                               # H5 预览
 
 共享层（`@lieshoucloud/*`）由独立仓维护，**经内网 Nexus 发版消费**（2026-09 起替代 `open/` submodule）：
 
-1. 改共享仓（如 `lieshou-core-web`）→ 合并 → 打 `vX.Y.Z` tag → CI 发布到 Nexus `npm-hosted`
-2. 本端升级：`pnpm up @lieshoucloud/core-web@^0.2.0`（或手改 `package.json` 后 `pnpm install`）
+1. 改共享仓（如 `lieshou-core-web`）→ 合并 → 打 `vX.Y.Z` tag（须等于 `package.json` version，且 CHANGELOG 有对应小节）→ CI 发布到 Nexus `npm-hosted`
+2. 本端升级：改 `package.json` 里对应包的**精确版本号** → `pnpm install` 重生成 lockfile
 3. 本端提交 `package.json` + `pnpm-lock.yaml`
 
-> 版本矩阵见 ai-kit `SUPPLY_CHAIN.md`；tag 只允许在验证后打，发布点只增不改。
+> 前置依赖先发：`core-web` 的发布门禁会校验它依赖的 `contract-*` / `i18n` 已在 `npm-hosted` 上，缺则拒发。
+> 版本矩阵与发布纪律见 `huntercat-ai-kit/SUPPLY_CHAIN.md`；tag 只允许在验证后打，发布点只增不改。
 
 ## 关联仓库
 

@@ -22,10 +22,10 @@
     "@tarojs/taro": "4.0.13",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "@lieshoucloud/contract-api": "^0.2.0",
-    "@lieshoucloud/contract-types": "^0.2.0",
-    "@lieshoucloud/core-web": "^0.1.0",
-    "@lieshoucloud/i18n": "^0.2.0"
+    "@lieshoucloud/contract-api": "0.2.1",
+    "@lieshoucloud/contract-types": "0.2.1",
+    "@lieshoucloud/core-web": "0.1.1",
+    "@lieshoucloud/i18n": "0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",
