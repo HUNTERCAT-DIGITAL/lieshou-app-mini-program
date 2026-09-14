@@ -2,7 +2,7 @@
   "name": "@lieshoucloud/mini-program-app",
   "version": "0.0.1",
   "private": true,
-  "description": "猎手云微信小程序（Taro 4 + React 18）· 端自身最小骨架（零上游共享依赖）。",
+  "description": "猎手云微信小程序（Taro 4 + React 18）· 上游共享包经内网 Nexus（@lieshoucloud 作用域）消费。",
   "scripts": {
     "dev:weapp": "taro build --type weapp --watch",
     "dev:h5": "taro build --type h5 --watch",
@@ -22,11 +22,10 @@
     "@tarojs/taro": "4.0.13",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "@lieshoucloud/contract-api": "workspace:*",
-    "@lieshoucloud/contract-config": "workspace:*",
-    "@lieshoucloud/contract-types": "workspace:*",
-    "@lieshoucloud/core-web": "workspace:*",
-    "@lieshoucloud/i18n": "workspace:*"
+    "@lieshoucloud/contract-api": "^0.2.0",
+    "@lieshoucloud/contract-types": "^0.2.0",
+    "@lieshoucloud/core-web": "^0.1.0",
+    "@lieshoucloud/i18n": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",

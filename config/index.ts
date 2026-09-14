@@ -3,7 +3,8 @@
  *
  * monorepo 适配:
  *  - alias 必须与 tsconfig.json paths 完全一致
- *  - 共享包源码（open/*）需加入 compile.include，webpack 才能用 babel 编译
+ *  - 客户包（packages/<client>）需加入 compile.include，webpack 才能用 babel 编译
+ *  - 共享包（@lieshoucloud/*）从 Nexus 装进 node_modules，同样需要 compile.include
  */
 import { existsSync, readdirSync, statSync } from "fs";
 import { resolve } from "path";
@@ -28,13 +29,13 @@ if (existsSync(clientRoot)) {
 
 const alias = {
   "@": resolve(projectRoot, "src"),
-  "@lieshoucloud/contract-api": resolve(projectRoot, "open/contract-api/src"),
-  "@lieshoucloud/contract-config": resolve(projectRoot, "open/contract-config/src"),
-  "@lieshoucloud/contract-types": resolve(projectRoot, "open/contract-types/src"),
-  "@lieshoucloud/core-web": resolve(projectRoot, "open/core-web/src"),
-  "@lieshoucloud/i18n": resolve(projectRoot, "open/i18n/src"),
   ...clientAlias,
 };
+
+// 共享包（@lieshoucloud/*）改为从内网 Nexus 消费（2026-09）：源码随 tarball 发布（main/types → src/*.ts），
+// 仍须让 babel 处理 node_modules 里的 TS/JSX —— 故显式加进 compile.include。
+// .npmrc 设 node-linker=hoisted，node_modules/@lieshoucloud/* 为真实目录（非 pnpm 软链），路径稳定。
+const sharedInclude = resolve(projectRoot, "node_modules/@lieshoucloud");
 
 export default defineConfig({
   projectName: "lieshoucloud-mini-program",
@@ -78,29 +79,15 @@ export default defineConfig({
       }
     },
     compile: {
-      include: [
-        resolve(projectRoot, "open/contract-api/src"),
-        resolve(projectRoot, "open/contract-config/src"),
-        resolve(projectRoot, "open/contract-types/src"),
-        resolve(projectRoot, "open/core-web/src"),
-        resolve(projectRoot, "open/i18n/src"),
-        ...clientIncludes,
-      ],
+      include: [sharedInclude, ...clientIncludes],
     },
   },
   // H5 配置（按需启用 --type h5）
   // publicPath 支持环境变量覆盖（子路径部署预览，如 TARO_APP_H5_PUBLIC_PATH=/mini-program/）
   h5: {
-    // 共享包源码（open/*）+ 客户包（packages/<client>）需要 babel 编译（webpack 默认只编译 sourceRoot）
+    // 共享包（node_modules/@lieshoucloud）+ 客户包（packages/<client>）需要 babel 编译（webpack 默认只编译 sourceRoot）
     compile: {
-      include: [
-        resolve(projectRoot, 'open/contract-api/src'),
-        resolve(projectRoot, 'open/contract-config/src'),
-        resolve(projectRoot, 'open/contract-types/src'),
-        resolve(projectRoot, 'open/core-web/src'),
-        resolve(projectRoot, 'open/i18n/src'),
-        ...clientIncludes,
-      ],
+      include: [sharedInclude, ...clientIncludes],
     },
     webpackChain(chain) {
       for (const [name, src] of Object.entries(alias)) {
