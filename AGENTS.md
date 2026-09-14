@@ -21,7 +21,7 @@ Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configure
 | `@lieshoucloud/i18n` | L0 契约（文案） | `0.2.0` |
 | `@lieshoucloud/core-web` | L1 业务逻辑 | `0.1.1` |
 
-- 制品在 `npm-hosted`，`.npmrc` 只给 `@lieshoucloud` scope 指向 `npm-group`（公共包仍走默认源）
+- 制品在 `npm-hosted`；`.npmrc` 的 `registry` 指 `npm-group` → **上游全部走内网 Nexus**（@lieshoucloud 走 hosted，公共包走 proxy 代理 npmmirror）
 - **精确锁版本、不用 caret**：`0.x` 的 `^0.2.1` 锁 `<0.3.0`，而历史上出过 `^0.0.1` 死链（i18n 0.0.1 下架后依赖方装不上）
 - 内网 Nexus 用 Caddy 自签 CA，node 不读系统信任库 → 装依赖前 `export NODE_EXTRA_CA_CERTS=<caddy-root.crt>`
 - `contract-config` 上游 `private`、端内零 import → 不声明
