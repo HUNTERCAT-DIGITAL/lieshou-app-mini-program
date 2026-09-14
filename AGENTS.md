@@ -8,6 +8,7 @@
 - 类型: 前端应用（微信小程序端，薄壳端）
 - 仓库: https://gitlab.ts.huntercat.cn/huntercat-digital/lieshou-app-mini-program（main **受保护** → 一律分支 + MR）
 - 技术栈: Taro 4 + React 18 + TypeScript strict + pnpm（**非 workspace**，单包）
+- 运行环境: **只在 Tailscale 内网使用**（GitLab / Nexus 均为内网域名）→ 不加公网兼容包袱，`.npmrc` 直接全局指向内网 Nexus
 
 ## 架构速览
 Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configureCore 端口注入，app.tsx），契约类型在 `@lieshoucloud/contract-types`（**内网 Nexus `npm-group` 消费**，2026-09 起不再走 `open/*` submodule）。客户定制走 Edition 体系 + `extra.ts` 注入槽位（EXTRA_HOME/PAGES/TABBAR/ENTRIES），零分叉。关键目录：`src/config/editions/`（版别体系）、`src/services/`（API 薄封装，统一出口）、`src/pages/`（6 页）、`src/stores/auth.ts`（core-web re-export）。
@@ -22,6 +23,7 @@ Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configure
 | `@lieshoucloud/core-web` | L1 业务逻辑 | `0.1.1` |
 
 - 制品在 `npm-hosted`；`.npmrc` 的 `registry` 指 `npm-group` → **上游全部走内网 Nexus**（@lieshoucloud 走 hosted，公共包走 proxy 代理 npmmirror）
+  · 本仓只在 tailnet 内使用（已定），所以不做“公共包回退默认源”的双轨——不要把它“修”回 scope 级 registry
 - **精确锁版本、不用 caret**：`0.x` 的 `^0.2.1` 锁 `<0.3.0`，而历史上出过 `^0.0.1` 死链（i18n 0.0.1 下架后依赖方装不上）
 - 内网 Nexus 用 Caddy 自签 CA，node 不读系统信任库 → 装依赖前 `export NODE_EXTRA_CA_CERTS=<caddy-root.crt>`
 - `contract-config` 上游 `private`、端内零 import → 不声明

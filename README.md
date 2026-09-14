@@ -13,11 +13,12 @@
 
 - Taro 4（React 18 + TypeScript）+ pnpm
 - 共享层 `@lieshoucloud/{contract-api,contract-types,core-web,i18n}` 经**内网 Nexus**（`npm-group`）版本依赖引入，**精确锁版本**（无 caret：`0.x` 的 `^0.2.1` 会把消费方锁在 `<0.3.0`，且历史上有 `^0.0.1` 死链事故）；不再用 `open/*` submodule
+- **本仓只在 Tailscale 内网使用**：依赖源统一为内网 Nexus（`.npmrc` 全局 registry），无需公网回退
 
 ## 快速开始
 
 ```bash
-# 需在 tailnet 内（能访 nexus.ts.huntercat.cn）
+# 前提：在 tailnet 内（GitLab / Nexus 均为内网域名，本仓不提供公网回退）
 git clone ssh://git@gitlab.ts.huntercat.cn:2222/huntercat-digital/lieshou-app-mini-program.git
 cd lieshou-app-mini-program
 
