@@ -21,7 +21,7 @@ import {
 
 import { API_BASE } from './config/api';
 
-// —— contract-api 模块级单例配置（客户包 dwjk/api 等走模块级 request 需要；ApiPort 走实例不受影响）——
+// —— contract-api 模块级单例配置（客户包若在模块级 request 上依赖它；ApiPort 走实例不受影响）——
 setBaseUrl(API_BASE);
 // 小程序无 fetch 全局：注入 Taro.request 适配器（web 端默认 fetch 不受影响）
 setRequestAdapter(async (url, init) => {

@@ -6,7 +6,7 @@
  */
 
 /** 品牌主色（平台蓝 · 对齐 app.config 导航栏与 web/mobile 品牌色） */
-export const brandColor = '#02429b';
+export const brandColor = '#1677ff';
 
 /** 页面/卡片/边框 */
 export const bgColor = '#f5f6f7';

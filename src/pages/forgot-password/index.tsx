@@ -8,6 +8,7 @@ import Taro from '@tarojs/taro';
 import { useEffect, useRef, useState } from 'react';
 import { resetPassword, sendCode, type CodeChannel } from '@lieshoucloud/core-web';
 
+import { getEdition } from '../../config/editions';
 import { brandColor, cardColor, fontSize, radius, spacing, statusColor, textColor } from '../../styles/tokens';
 
 const inputStyle = {
@@ -88,7 +89,8 @@ export default function ForgotPasswordPage() {
     setError('');
     setSubmitting(true);
     try {
-      await resetPassword(channel, target.trim(), code.trim(), newPassword);
+      // tenantCode 为首参（多租户 ADR-0022）：与 login 页一致走 edition.tenantCode
+      await resetPassword(getEdition().tenantCode, channel, target.trim(), code.trim(), newPassword);
       Taro.showToast({ title: '密码重置成功，请登录', icon: 'success', duration: 1800 });
       setTimeout(() => Taro.reLaunch({ url: '/pages/login/login' }), 1500);
     } catch (e) {
@@ -122,7 +124,7 @@ export default function ForgotPasswordPage() {
     <View
       style={{
         minHeight: '100vh',
-        backgroundImage: 'linear-gradient(160deg, #02429b 0%, #0a6bd8 60%, #f5f6f7 60.1%)',
+        backgroundImage: 'linear-gradient(160deg, #1677ff 0%, #4096ff 60%, #f5f6f7 60.1%)',
         padding: '64px 32px',
         display: 'flex',
         flexDirection: 'column',
