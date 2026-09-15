@@ -6,7 +6,7 @@ import { Button, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { useAuthStore } from '@lieshoucloud/core-web';
 
-import { getEdition } from '../../config/editions';
+import { getBrandName, getEdition } from '../../config/editions';
 import { bgColor, brandColor, fontSize, radius, spacing } from '../../styles/tokens';
 
 export default function HomePage() {
@@ -35,7 +35,7 @@ export default function HomePage() {
       }}
     >
       <Text style={{ display: 'block', fontSize: `${fontSize.xxl}px`, fontWeight: 700, color: brandColor }}>
-        {edition.brandName}
+        {getBrandName()}
       </Text>
       <Text style={{ display: 'block', marginTop: `${spacing.sm}px`, fontSize: `${fontSize.md}px` }}>
         页面构建中…

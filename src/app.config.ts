@@ -3,7 +3,7 @@
  * pages 数组顺序 = 启动时默认首页；客户启动页（EXTRA_HOME）优先。
  */
 import * as extra from './config/editions/extra';
-import { getEdition } from './config/editions';
+import { getBrandName, getEdition } from './config/editions';
 
 const DEFAULT_ENTRY = 'pages/login/login';
 const edition = getEdition();
@@ -32,7 +32,7 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: EXTRA_NAV_COLOR ?? edition.primaryColor ?? '#1677ff',
-    navigationBarTitleText: edition.brandName,
+    navigationBarTitleText: getBrandName(),
     navigationBarTextStyle: 'white',
     backgroundColor: '#f7f7f7',
   },

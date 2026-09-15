@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { getEdition } from '../editions';
+import { getBrandName, getBrandSlogan, getEdition } from '../editions';
 import { APP_VERSION } from '../version';
 
 describe('冒烟', () => {
@@ -16,5 +16,10 @@ describe('冒烟', () => {
     expect(e.id).toBe('generic');
     expect(e.brandName).toBe('猎手云');
     expect(e.login?.required).toBe(true);
+  });
+
+  it('品牌文案缺省回落 generic（客户仓未注入槽位时）', () => {
+    expect(getBrandName()).toBe('猎手云');
+    expect(getBrandSlogan()).toBe('数字化平台 · 小程序');
   });
 });

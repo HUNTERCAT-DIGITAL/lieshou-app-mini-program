@@ -9,7 +9,7 @@ import { Button, Input, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { loginWithCode, sendCode, useAuthStore } from '@lieshoucloud/core-web';
 
-import { getEdition } from '../../config/editions';
+import { getBrandName, getBrandSlogan, getEdition } from '../../config/editions';
 import { EXTRA_HOME } from '../../config/editions/extra';
 import { brandColor, cardColor, fontSize, radius, spacing, statusColor, textColor } from '../../styles/tokens';
 
@@ -173,11 +173,11 @@ export default function LoginPage() {
       {/* 品牌区（蓝色区 · 白字） */}
       <View style={{ textAlign: 'center', marginBottom: '32px' }}>
         <Text style={{ display: 'block', color: '#fff', fontSize: '28px', fontWeight: 700, lineHeight: 1.4 }}>
-          {edition.brandName}
+          {getBrandName()}
         </Text>
-        {edition.slogan ? (
+        {getBrandSlogan() ? (
           <Text style={{ display: 'block', marginTop: `${spacing.sm}px`, color: 'rgba(255,255,255,0.85)', fontSize: `${fontSize.sm}px` }}>
-            {edition.slogan}
+            {getBrandSlogan()}
           </Text>
         ) : null}
       </View>
