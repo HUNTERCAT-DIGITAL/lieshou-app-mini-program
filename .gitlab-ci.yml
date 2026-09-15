@@ -1,8 +1,12 @@
 # ============================================================
-# lieshou-app-mini-program CI —— 由 .github/workflows/ci.yml 平移（GitHub → 内网 GitLab）
+# lieshou-app-mini-program CI/CD —— 由 .github/workflows/ci.yml 平移（GitHub → 内网 GitLab）
 # ------------------------------------------------------------
 # 定位：**上游中性仓**（不内嵌客户页面/文案/域名 · client-guard 口径）。
 #   客户内容由客户仓 `deploy/prepare.mjs` 注入到工作树（gitignore 白名单），本仓门禁不感知客户。
+#
+# 流水线：
+#   MR / main push → test（门禁：install/version:check/typecheck/lint/test/build:weapp/build:h5）
+#   tag release-*  → release（同门禁 + 打两个产物包 → GitLab Packages + Release 制品）
 #
 # 前置（由 wqc-server-dell 组级 docker runner 提供，tags: wqc）：
 #   · 挂卷 /srv/gitlab-runner-cache/m2 → /root/.m2，内含 caddy-root.crt（内网 Caddy 自签 CA）
@@ -10,7 +14,13 @@
 #   · 默认镜像是 maven（无 node/pnpm）→ 必须显式指定 image
 # 依赖源：`.npmrc` 的 registry 指向内网 Nexus npm-group（本仓只在 tailnet 内使用）
 # ============================================================
-stages: [test]
+stages: [test, release]
+
+.nexus_env: &nexus_env
+  # corepack 拉 pnpm 本体也不回公网；node 不读系统信任库 → 走 nexus 必须显式给 CA
+  NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
+  COREPACK_NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
+  NODE_EXTRA_CA_CERTS: /root/.m2/caddy-root.crt
 
 frontend:
   stage: test
@@ -19,17 +29,15 @@ frontend:
   timeout: 30m
   interruptible: true
   variables:
-    # corepack 拉 pnpm 本体也不回公网；node 不读系统信任库 → 走 nexus 必须显式给 CA
-    NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
-    COREPACK_NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
-    NODE_EXTRA_CA_CERTS: /root/.m2/caddy-root.crt
-    # 不用 GitLab CI cache：runner 侧已有全局 pnpm store，打包/解包反而慢（对齐历史结论）
+    <<: *nexus_env
   script:
     - corepack enable && corepack prepare pnpm@9.12.0 --activate
     - pnpm install --frozen-lockfile
     # 依赖源自检：公共包与 @lieshoucloud 都必须来自内网 Nexus（防止静默回公网）
     - npm view react dist.tarball | tee /tmp/tarball-url.txt
     - grep -q 'nexus.ts.huntercat.cn' /tmp/tarball-url.txt
+    # 版本号单一真源：package.json == src/config/version.ts（漂移即拒）
+    - pnpm run version:check
     - pnpm run typecheck
     - pnpm run lint
     - pnpm run test
@@ -38,4 +46,58 @@ frontend:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_COMMIT_TAG'
+
+# 发布：推 release-* tag 触发（tag 由维护者在合并后的 main 上打：`pnpm release:tag`）
+# 产物：weapp 包 + H5 包（tar.gz）→ GitLab Packages（`mini-program/<tag>/`）+ Release 资产链接
+release:
+  stage: release
+  image: node:22-bookworm
+  tags: [wqc]
+  timeout: 30m
+  variables:
+    <<: *nexus_env
+  script:
+    - corepack enable && corepack prepare pnpm@9.12.0 --activate
+    - pnpm install --frozen-lockfile
+    - pnpm run version:check
+    - pnpm run typecheck
+    - pnpm run lint
+    - pnpm run test
+    # weapp 包（微信上传用）
+    - pnpm run build:weapp
+    - tar -czf "mini-program-weapp-${CI_COMMIT_TAG}.tar.gz" -C dist .
+    # H5 包（静态托管 / 预览用，子路径 /mini-program/）
+    - rm -rf dist
+    - pnpm run build:h5
+    - tar -czf "mini-program-h5-${CI_COMMIT_TAG}.tar.gz" -C dist .
+    - pnpm run release:notes > notes.md
+    - |
+      set -e
+      PKG_URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/mini-program/$CI_COMMIT_TAG"
+      for f in mini-program-*.tar.gz; do
+        curl --fail --silent --show-error --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PKG_URL/$f"
+        echo "已上传 $f → $PKG_URL/$f"
+      done
+      node -e "
+        const fs = require('fs');
+        const tag = process.env.CI_COMMIT_TAG;
+        const base = process.env.CI_API_V4_URL + '/projects/' + process.env.CI_PROJECT_ID + '/packages/generic/mini-program/' + tag;
+        const files = fs.readdirSync('.').filter((f) => /^mini-program-.*\.tar\.gz$/.test(f));
+        fs.writeFileSync('release.json', JSON.stringify({
+          name: tag,
+          tag_name: tag,
+          description: fs.readFileSync('notes.md', 'utf8'),
+          assets: { links: files.map((f) => ({ name: f, url: base + '/' + f, link_type: 'package' })) },
+        }));
+      "
+      curl --fail --silent --show-error --request POST \
+        --header "JOB-TOKEN: $CI_JOB_TOKEN" --header "Content-Type: application/json" \
+        --data @release.json "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
+      echo "Release 已创建：$CI_PROJECT_URL/-/releases/$CI_COMMIT_TAG"
+  artifacts:
+    name: "$CI_COMMIT_TAG"
+    paths:
+      - mini-program-*.tar.gz
+    expire_in: 1 year
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^release-/'

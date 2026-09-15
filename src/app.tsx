@@ -20,6 +20,7 @@ import {
 } from '@lieshoucloud/contract-api';
 
 import { API_BASE } from './config/api';
+import { setupUpdateCheck } from './utils/update';
 
 // —— contract-api 模块级单例配置（客户包若在模块级 request 上依赖它；ApiPort 走实例不受影响）——
 setBaseUrl(API_BASE);
@@ -122,6 +123,8 @@ function App({ children }: PropsWithChildren) {
   useLaunch(() => {
     // eslint-disable-next-line no-console -- 启动日志（有意保留）
     console.log('[LieShouCloud Mini] App launched.');
+    // 微信发布新版本后的重启提示（H5 自动跳过）
+    setupUpdateCheck();
   });
   // children 是 Taro 自动注入的页面栈
   return children;

@@ -64,6 +64,29 @@ pnpm dev:h5                               # H5 预览
 - `app.config.ts` 展开 `EXTRA_PAGES` 注册客户页面;workbench 渲染 `EXTRA_ENTRIES`
 - 行业能力经 `edition.industries` 声明(industry 包为闭源商业模块)
 
+## 发版 / 发布
+
+本仓**不发 npm 制品**（`private: true`）——发版 = 版本号 + CHANGELOG + 发布点 tag，CI 产出可下载的产物包。
+
+```bash
+pnpm release:bump patch    # 升版本（package.json 单一真源）→ 同步 src/config/version.ts + CHANGELOG 骨架
+#  填 CHANGELOG → 开分支 + MR → 合并（main 受保护）
+pnpm release:tag           # 在 origin/main 上打 release-YYYY-MM[.N] 并推送 → 触发 release job
+```
+
+- **版本单一真源**：`pnpm version:check` 守漂移（CI 门禁：`package.json` 必须等于 `src/config/version.ts`）
+- **tag 命名**（SUPPLY_CHAIN §3：非 L0 仓用 `release-YYYY-MM`）：默认 `release-YYYY-MM`，同名已存在则自动 `release-YYYY-MM.N`
+  （发布点不可变，只增不改）
+- **release job 产出**：`mini-program-weapp-<tag>.tar.gz`（微信上传用）+ `mini-program-h5-<tag>.tar.gz`（静态托管预览用），
+  落 GitLab Packages `mini-program/<tag>/` 并挂到该 tag 的 Release 资产
+- ⚠️ **微信后台上传（体验版/正式版）尚未接入**：需 appid + 上传私钥（CI file 变量）后用 `miniprogram-ci` 上传；
+  当前 `project.config.json` 里是通用占位 appid
+
+## 端内更新
+
+`src/utils/update.ts`（app.tsx 的 `useLaunch` 调用）：微信发布新版本后，`getUpdateManager().onUpdateReady` 弹一次
+「新版本已准备好，是否重启」并 `applyUpdate()`；`onUpdateFailed` 提示稍后重试；H5 自动跳过。
+
 ## 共享层升级流程
 
 共享层（`@lieshoucloud/*`）由独立仓维护，**经内网 Nexus 发版消费**（2026-09 起替代 `open/` submodule）：
