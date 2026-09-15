@@ -1,0 +1,41 @@
+# ============================================================
+# lieshou-app-mini-program CI —— 由 .github/workflows/ci.yml 平移（GitHub → 内网 GitLab）
+# ------------------------------------------------------------
+# 定位：**上游中性仓**（不内嵌客户页面/文案/域名 · client-guard 口径）。
+#   客户内容由客户仓 `deploy/prepare.mjs` 注入到工作树（gitignore 白名单），本仓门禁不感知客户。
+#
+# 前置（由 wqc-server-dell 组级 docker runner 提供，tags: wqc）：
+#   · 挂卷 /srv/gitlab-runner-cache/m2 → /root/.m2，内含 caddy-root.crt（内网 Caddy 自签 CA）
+#   · nexus / gitlab 域名解析由 runner 的 extra_hosts 提供 —— **不要在仓里补 /etc/hosts**（死代码）
+#   · 默认镜像是 maven（无 node/pnpm）→ 必须显式指定 image
+# 依赖源：`.npmrc` 的 registry 指向内网 Nexus npm-group（本仓只在 tailnet 内使用）
+# ============================================================
+stages: [test]
+
+frontend:
+  stage: test
+  image: node:22-bookworm
+  tags: [wqc]
+  timeout: 30m
+  interruptible: true
+  variables:
+    # corepack 拉 pnpm 本体也不回公网；node 不读系统信任库 → 走 nexus 必须显式给 CA
+    NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
+    COREPACK_NPM_REGISTRY: https://nexus.ts.huntercat.cn/repository/npm-group/
+    NODE_EXTRA_CA_CERTS: /root/.m2/caddy-root.crt
+    # 不用 GitLab CI cache：runner 侧已有全局 pnpm store，打包/解包反而慢（对齐历史结论）
+  script:
+    - corepack enable && corepack prepare pnpm@9.12.0 --activate
+    - pnpm install --frozen-lockfile
+    # 依赖源自检：公共包与 @lieshoucloud 都必须来自内网 Nexus（防止静默回公网）
+    - npm view react dist.tarball | tee /tmp/tarball-url.txt
+    - grep -q 'nexus.ts.huntercat.cn' /tmp/tarball-url.txt
+    - pnpm run typecheck
+    - pnpm run lint
+    - pnpm run test
+    - pnpm run build:weapp
+    - pnpm run build:h5
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
