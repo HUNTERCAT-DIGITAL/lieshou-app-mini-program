@@ -14,7 +14,7 @@ describe('冒烟', () => {
   it('getEdition 返回 generic 版别配置', () => {
     const e = getEdition();
     expect(e.id).toBe('generic');
-    expect(e.brandName).toBe('物联网云平台');
+    expect(e.brandName).toBe('猎手云');
     expect(e.login?.required).toBe(true);
   });
 });
