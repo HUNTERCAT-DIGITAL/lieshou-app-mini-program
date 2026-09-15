@@ -14,7 +14,7 @@ import { EXTRA_HOME } from '../../config/editions/extra';
 import { brandColor, cardColor, fontSize, radius, spacing, statusColor, textColor } from '../../styles/tokens';
 
 /** 记住密码本地存储 key */
-const REMEMBER_KEY = 'dwjk:login:remember';
+const REMEMBER_KEY = 'lieshoucloud:login:remember'; // 中性 key：上游不绑定任何客户的存储命名
 
 interface RememberedCredential {
   username: string;
@@ -163,7 +163,7 @@ export default function LoginPage() {
       style={{
         minHeight: '100vh',
         // 撞色：上 60% 品牌蓝（白字品牌）→ 下 40% 页面灰（白卡表单）· 对齐 H5 登录页
-        backgroundImage: 'linear-gradient(160deg, #02429b 0%, #0a6bd8 60%, #f5f6f7 60.1%)',
+        backgroundImage: 'linear-gradient(160deg, #1677ff 0%, #4096ff 60%, #f5f6f7 60.1%)',
         padding: '64px 32px',
         display: 'flex',
         flexDirection: 'column',

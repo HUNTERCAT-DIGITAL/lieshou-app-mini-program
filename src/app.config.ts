@@ -31,7 +31,7 @@ export default {
   pages,
   window: {
     backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: EXTRA_NAV_COLOR ?? edition.primaryColor ?? '#02429b',
+    navigationBarBackgroundColor: EXTRA_NAV_COLOR ?? edition.primaryColor ?? '#1677ff',
     navigationBarTitleText: edition.brandName,
     navigationBarTextStyle: 'white',
     backgroundColor: '#f7f7f7',

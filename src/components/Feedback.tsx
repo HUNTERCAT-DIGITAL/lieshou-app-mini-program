@@ -56,7 +56,7 @@ export function ErrorView({ text = '加载失败', onRetry }: { text?: string; o
             marginTop: `${spacing.md}px`,
             padding: `${spacing.sm}px ${spacing.xl}px`,
             borderRadius: `${radius.lg}px`,
-            backgroundColor: '#02429b',
+            backgroundColor: '#1677ff',
           }}
         >
           <Text style={{ fontSize: `${fontSize.md}px`, color: '#fff' }}>重试</Text>

@@ -23,3 +23,14 @@ coverage/
 # LieShouBoot prepare.mjs 生成的薄壳页（勿提交）
 src/pages/boot/
 .swc/
+
+# 客户仓注入的客户页面目录（客户端 prepare 生成 · 勿提交）
+# 中性白名单：上游自有页面（home / login / forgot-password）以外的目录一律忽略，
+# 客户页面目录名由客户自定，上游不点名（client-guard 口径）。
+src/pages/*/
+!src/pages/home/
+!src/pages/login/
+!src/pages/forgot-password/
+
+# 客户仓注入的版别 tsconfig（tsconfig.<client>.json · 勿提交）
+tsconfig.*.json
