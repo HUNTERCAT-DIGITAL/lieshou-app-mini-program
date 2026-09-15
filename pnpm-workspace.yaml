@@ -1,0 +1,8 @@
+# 端自身骨架：本仓自成 workspace 根（无成员包）。
+#
+# 为什么必须有这个文件：本仓在交付仓里是 submodule，pnpm 会沿目录向上找 workspace 根 ——
+# 没有本文件时它会认到**交付仓根**的 pnpm-workspace.yaml（packages/*），于是在交付仓根装依赖、
+# 本端 node_modules 为空 → CI 报 `sh: taro: not found`（实测 pipeline 984 / job 2803）。
+# 其余 4 个端（admin-web / mobile-web / mobile / desktop）同样是「各自持有一份 workspace 文件」。
+# ⚠️ 不要因为「本仓已无 open/* submodule、没有 workspace 成员」而删掉它。
+packages: []
