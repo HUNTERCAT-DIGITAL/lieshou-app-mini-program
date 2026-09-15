@@ -42,10 +42,10 @@ Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configure
 ## 待办
 - [ ] 清理假数据（workbench「今日新增 3」硬编码）
 - [ ] `resolveEditionFromHostname` stub 补 TODO 或实现（当前硬编码 generic）
-- [x] 客户页面已回收到交付仓（2026-09-14）：删 `src/pages/dwjk/*` + `tsconfig.dwjk.json`，上游改「中性白名单 gitignore + editions/extra.ts 空槽位」，客户仓 prepare 照旧注入
+- [x] 客户页面已回收到交付仓（2026-09-14）：删客户页面目录 `src/pages/<client>/*` + `tsconfig.<client>.json`，上游改「中性白名单 gitignore + editions/extra.ts 空槽位」，客户仓 prepare 照旧注入
 - [ ] 存量：`forgot-password` 调 `resetPassword` 少传 `tenantCode`（TS2554，pin 时代就存在）
 - [ ] 登录页微信一键登录/记住账号（后端支持情况待确认）
-- [ ] 交付仓（dwjk / jiangcai / legalmind）的 mini-program submodule pin 尚未 bump 到本次 Nexus 切换后的 main
+- [ ] 各客户交付仓的 mini-program submodule pin 尚未 bump 到本次 Nexus 切换后的 main
 
 > ✅ 已验证：contract-api bump 9685220（normalizeApiPath 自动补 /api）后测试持续 43/43 全绿，断言未受影响。
 
