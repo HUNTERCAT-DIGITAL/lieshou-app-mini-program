@@ -75,7 +75,8 @@ release:
       set -e
       PKG_URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/mini-program/$CI_COMMIT_TAG"
       for f in mini-program-*.tar.gz; do
-        curl --fail --silent --show-error --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PKG_URL/$f"
+        curl --fail --silent --show-error --cacert "$NODE_EXTRA_CA_CERTS" \
+          --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "$f" "$PKG_URL/$f"
         echo "已上传 $f → $PKG_URL/$f"
       done
       node -e "
@@ -90,7 +91,8 @@ release:
           assets: { links: files.map((f) => ({ name: f, url: base + '/' + f, link_type: 'package' })) },
         }));
       "
-      curl --fail --silent --show-error --request POST \
+      # 内网 GitLab 走 Caddy 自签 CA：curl 不读系统信任库，必须显式 --cacert（NODE_EXTRA_CA_CERTS 指同一份）
+      curl --fail --silent --show-error --cacert "$NODE_EXTRA_CA_CERTS" --request POST \
         --header "JOB-TOKEN: $CI_JOB_TOKEN" --header "Content-Type: application/json" \
         --data @release.json "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
       echo "Release 已创建：$CI_PROJECT_URL/-/releases/$CI_COMMIT_TAG"
