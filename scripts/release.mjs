@@ -78,9 +78,17 @@ function bump(kind) {
 function notes() {
   const v = readPkg().version;
   const text = existsSync(CHANGELOG_FILE) ? readFileSync(CHANGELOG_FILE, 'utf8') : '';
-  const re = new RegExp(`^## ${v.replace(/\./g, '\\.')}（[^）]*）[\\s\\S]*?(?=^## |\\Z)`, 'm');
-  const hit = text.match(re);
-  process.stdout.write(hit ? hit[0].trim() : `## ${v}\n`);
+  // 按行扫描：从 `## <version>（…）` 开始，到下一个 `## ` 或文件末尾
+  const lines = text.split('\n');
+  const start = lines.findIndex((l) => l.startsWith(`## ${v}（`) || l.startsWith(`## ${v}(`));
+  if (start < 0) {
+    process.stdout.write(`## ${v}\n`);
+    return;
+  }
+  const rest = lines.slice(start + 1);
+  const end = rest.findIndex((l) => l.startsWith('## '));
+  const body = (end < 0 ? rest : rest.slice(0, end)).join('\n').trim();
+  process.stdout.write(`${lines[start]}\n${body ? `\n${body}\n` : ''}`);
 }
 
 function tag(name) {
