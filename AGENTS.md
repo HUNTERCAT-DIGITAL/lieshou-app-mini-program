@@ -29,6 +29,10 @@ Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configure
 - `contract-config` 上游 `private`、端内零 import → 不声明
 
 ## 关键约定
+- 发版工具链（`scripts/release.mjs`）：`pnpm version:check` 守版本漂移（package.json == src/config/version.ts）；
+  `pnpm release:bump <kind>` 升版本 + CHANGELOG 骨架；`pnpm release:tag` 在 origin/main 上打 `release-YYYY-MM[.N]`
+- 发版链：tag `release-*` → CI release job（weapp 包 + H5 包 → GitLab Packages + Release 资产）；微信后台上传未接入（需凭证）
+- 端内更新：`src/utils/update.ts` 接 `getUpdateManager`（仅 weapp），新版本就绪提示重启
 - 类型/META 一律 import 契约层，禁止端侧重定义；`STATUS_META`（customer 版）因 index.ts `export*` 同名冲突走深路径 `@lieshoucloud/contract-types/business/customer`
 - 共享层 META 的 color 是 antd 语义色（非 CSS 色值），由 `MiniUI.tsx` 的 `ANTD_TAG_COLORS` 映射消费
 - `services/*.ts` 为端侧统一出口（re-export 契约层），页面 import 路径不变
@@ -50,6 +54,8 @@ Taro 4 小程序薄壳端：业务逻辑在 `@lieshoucloud/core-web`（configure
 > ✅ 已验证：contract-api bump 9685220（normalizeApiPath 自动补 /api）后测试持续 43/43 全绿，断言未受影响。
 
 ## 关键决策
+- 2026-09-15: 发版/发布落地——版本号单一真源（`package.json` → `src/config/version.ts` 由 `scripts/release.mjs sync` 生成，CI `version:check` 守漂移）；发布点 tag `release-YYYY-MM[.N]`（非 L0 仓口径，不可变）；release job 出 `mini-program-{weapp,h5}-<tag>.tar.gz` 到 GitLab Packages + Release 资产；端内接 `getUpdateManager` 更新提示。**不发 npm 制品**（private，本仓无 Nexus 包）；微信后台上传待凭证（appid + 私钥 + miniprogram-ci）。
+- 2026-09-15: 中性化收尾——`EXTRA_NAV_COLOR` 槽位具名导出（缺省 null，该槽位是活的：客户仓 prepare 会注入）；文档散文中客户代号改 `<client>`。历史提交里仍有客户页面/域名（旧 `release-2026-09` tag 亦指向它），如需彻底中性需重写历史（会作废 tag 与各仓 pin，未做）。
 - 2026-09-14: 共享包改为**内网 Nexus 消费**（`@lieshoucloud/{contract-api 0.2.1,contract-types 0.2.1,core-web 0.1.1,i18n 0.2.0}` **精确版本**）；删 7 个 `open/*` submodule + `.gitmodules` + `pnpm-workspace.yaml`；`.npmrc` = scope 级 registry + `node-linker=hoisted`；`config/index.ts` 的 `compile.include` 指向 `node_modules/@lieshoucloud`（共享包发的是 TS 源码，仍需 babel 编译）
 - 2026-08-28: 类型/META 收敛至契约层**闭环**（customer/inventory/approval/finance 去重复定义 + ApiError 统一 contract-api）；StatusBadge 加 ANTD_TAG_COLORS（antd 语义色 → 小程序色值）
 - 2026-08-28: 真实 ESLint（flat config + react-hooks）替换占位脚本；api.test 改 mock @tarojs/taro（fetchGatewayHealth 走 Taro.request 非 fetch）

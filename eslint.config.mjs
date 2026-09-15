@@ -62,4 +62,13 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
+
+  // 5. Node 工具脚本（发版工具等）：有 console/process，定义 Node 全局
+  //    （本仓不引 `globals` 包，按需声明；.ts 侧 no-undef 已被 typescript-eslint 关掉，只有 .mjs 会报）
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly' },
+    },
+  },
 );

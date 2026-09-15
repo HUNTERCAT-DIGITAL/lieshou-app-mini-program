@@ -1,6 +1,6 @@
 {
   "name": "@lieshoucloud/mini-program-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "猎手云微信小程序（Taro 4 + React 18）· 上游共享包经内网 Nexus（@lieshoucloud 作用域）消费。",
   "scripts": {
@@ -10,6 +10,11 @@
     "build:weapp": "taro build --type weapp",
     "build:h5": "taro build --type h5",
     "typecheck": "tsc --noEmit",
+    "version:sync": "node scripts/release.mjs sync",
+    "version:check": "node scripts/release.mjs check",
+    "release:bump": "node scripts/release.mjs bump",
+    "release:notes": "node scripts/release.mjs notes",
+    "release:tag": "node scripts/release.mjs tag",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "test": "vitest run --passWithNoTests"

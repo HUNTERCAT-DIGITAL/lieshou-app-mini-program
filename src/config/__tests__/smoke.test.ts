@@ -7,8 +7,8 @@ import { getEdition } from '../editions';
 import { APP_VERSION } from '../version';
 
 describe('冒烟', () => {
-  it('版本常量可解析', () => {
-    expect(APP_VERSION).toBe('0.0.1');
+  it('版本常量可解析（semver 形状；与 package.json 的一致性由 `pnpm version:check` 守）', () => {
+    expect(APP_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
   it('getEdition 返回 generic 版别配置', () => {
